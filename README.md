@@ -3,9 +3,6 @@
 Author is syed adnan hossain learning project
 use own api key.
 [get aoi key from](https://newsdata.io/)
-use own api key
-get api key from :-https://newsdata.io/
->>>>>>> adae378cef29026f7dd3e646564f9334d7129c1a
 and put them into app.js
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
