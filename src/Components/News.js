@@ -32,7 +32,7 @@ export class News extends Component {
   async componentDidMount() {
     this.setState({ loading: true });
 
-    let url = `https://newsdata.io/api/1/latest?apikey=pub_3c223793742549e090d881b28a45a68e&country=${this.props.country}&category=${this.props.category}&language=en&size=${this.props.pageSize}`;
+    let url = `https://newsdata.io/api/1/latest?apikey=${this.props.apiKey}&country=${this.props.country}&category=${this.props.category}&language=en&size=${this.props.pageSize}`;
     let data = await fetch(url);
     let parsedData = await data.json();
     console.log(parsedData);
@@ -49,7 +49,7 @@ export class News extends Component {
     if (this.state.nextPage) {
       this.setState({ loading: true });
 
-      let url = `https://newsdata.io/api/1/latest?apikey=pub_3c223793742549e090d881b28a45a68e&country=${this.props.country}&category=${this.props.category}&language=en&size=${this.props.pageSize}&page=${this.state.nextPage}`;
+      let url = `https://newsdata.io/api/1/latest?apikey=${this.props.apiKey}&country=${this.props.country}&category=${this.props.category}&language=en&size=${this.props.pageSize}&page=${this.state.nextPage}`;
       let data = await fetch(url);
       let parsedData = await data.json();
 
@@ -69,7 +69,7 @@ export class News extends Component {
       let prevTokensCopy = [...this.state.prevTokens];
       let prevToken = prevTokensCopy.pop();
 
-      let url = `https://newsdata.io/api/1/latest?apikey=pub_3c223793742549e090d881b28a45a68ecountry=${this.props.country}&category=${this.props.category}&language=en&size=${this.props.pageSize}&page=${prevToken}`;
+      let url = `https://newsdata.io/api/1/latest?apikey=${this.props.apiKey}&country=${this.props.country}&category=${this.props.category}&language=en&size=${this.props.pageSize}&page=${prevToken}`;
       let data = await fetch(url);
       let parsedData = await data.json();
 
