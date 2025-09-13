@@ -7,6 +7,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 export default class App extends Component {
 
   //api= "your api key"; API key as string
+  api="pub_764f1b1f8a274766855bb737d4a45e1b"
 
   render() {
     return (

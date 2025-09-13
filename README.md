@@ -1,7 +1,6 @@
 # Getting Started with Create React App
 
 Author is syed adnan hossain learning project
-<br>
 use own api key.
 [get api key from](https://newsdata.io/)
 and put them into app.js
