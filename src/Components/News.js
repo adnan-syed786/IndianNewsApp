@@ -4,105 +4,123 @@ import Spinner from './spinner'
 import PropTypes from 'prop-types'
 
 export class News extends Component {
-  
-  //create static variables in class
+
+  // default props
   static defaultProps = {
-     country:'us',
-     pageSize:8,
-     category:'general'
-   }
+    country: 'in',
+    pageSize: 6,
+    category: 'top'
+  }
 
   static propTypes = {
     country: PropTypes.string,
     pageSize: PropTypes.number,
     category: PropTypes.string
   }
+
   constructor(props) {
-    super(props)
+    super(props);
+    console.log("hello i am constructor from news component");
     this.state = {
-      articles: [],
+      results: [],
       loading: false,
-      page: 1,
-      totalResults: 0
-    }
+      nextPage: null,   // token for next page
+      prevTokens: []    // stack for previous pages
+    };
   }
 
   async componentDidMount() {
-    this.setState({ loading: true })
-    let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apikey=5cfe38c79d7f4d8297940e1e6737960a&page=1&pageSize=${this.props.pageSize}`
-    let data = await fetch(url)
-    let parsedData = await data.json()
-    this.setState({
-      articles: parsedData.articles,
-      totalResults: parsedData.totalResults,
-      loading: false
-    })
-  }
+    this.setState({ loading: true });
 
-  handlePrevClick = async () => {
-    this.setState({ loading: true })
-    let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apikey=5cfe38c79d7f4d8297940e1e6737960a&page=${this.state.page - 1}&pageSize=${this.props.pageSize}`
-    let data = await fetch(url)
-    let parsedData = await data.json()
+    let url = `https://newsdata.io/api/1/latest?apikey=pub_3c223793742549e090d881b28a45a68e&country=${this.props.country}&category=${this.props.category}&language=en&size=${this.props.pageSize}`;
+    let data = await fetch(url);
+    let parsedData = await data.json();
+    console.log(parsedData);
+
     this.setState({
-      page: this.state.page - 1,
-      articles: parsedData.articles,
-      loading: false
-    })
+      results: Array.isArray(parsedData.results) ? parsedData.results : [],
+      nextPage: parsedData.nextPage || null,
+      prevTokens: [],
+      loading: false,
+    });
   }
 
   handleNextClick = async () => {
-    let maxPages = Math.ceil(this.state.totalResults / this.props.pageSize)
+    if (this.state.nextPage) {
+      this.setState({ loading: true });
 
-    if (this.state.page + 1 <= maxPages) {
-      this.setState({ loading: true })
-      let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apikey=5cfe38c79d7f4d8297940e1e6737960a&page=${this.state.page + 1}&pageSize=${this.props.pageSize}`
-      let data = await fetch(url)
-      let parsedData = await data.json()
-      this.setState({
-        page: this.state.page + 1,
-        articles: parsedData.articles,
-        loading: false
-      })
+      let url = `https://newsdata.io/api/1/latest?apikey=pub_3c223793742549e090d881b28a45a68e&country=${this.props.country}&category=${this.props.category}&language=en&size=${this.props.pageSize}&page=${this.state.nextPage}`;
+      let data = await fetch(url);
+      let parsedData = await data.json();
+
+      this.setState((prevState) => ({
+        results: Array.isArray(parsedData.results) ? parsedData.results : [],
+        nextPage: parsedData.nextPage || null,
+        prevTokens: [...prevState.prevTokens, prevState.nextPage], // store old token
+        loading: false,
+      }));
     }
-  }
+  };
+
+  handlePrevClick = async () => {
+    if (this.state.prevTokens.length > 0) {
+      this.setState({ loading: true });
+
+      let prevTokensCopy = [...this.state.prevTokens];
+      let prevToken = prevTokensCopy.pop();
+
+      let url = `https://newsdata.io/api/1/latest?apikey=pub_3c223793742549e090d881b28a45a68ecountry=${this.props.country}&category=${this.props.category}&language=en&size=${this.props.pageSize}&page=${prevToken}`;
+      let data = await fetch(url);
+      let parsedData = await data.json();
+
+      this.setState({
+        results: Array.isArray(parsedData.results) ? parsedData.results : [],
+        nextPage: parsedData.nextPage || null,
+        prevTokens: prevTokensCopy,
+        loading: false,
+      });
+    }
+  };
 
   render() {
     return (
       <div className="container my-3">
-        <h1 className="text-center" style={{ margin:"35px 0px" }}>KhabarPoint - Top Headlines</h1>
+        <h1 className="text-center" style={{ margin: "35px 0px" }}>
+          KhabarPoint - Top Headlines
+        </h1>
 
         {this.state.loading && <Spinner />}
 
         <div className="row">
-          {!this.state.loading && this.state.articles.map((element) => {
-            return (
-              <div className="col-md-4" key={element.url}>
+          {Array.isArray(this.state.results) &&
+            this.state.results.map((element) => (
+              <div className="col-md-4" key={element.link}>
                 <NewsItem
                   title={element.title ? element.title.slice(0, 45) : ""}
                   description={element.description ? element.description.slice(0, 88) : ""}
-                  imageUrl={element.urlToImage}
-                  newsUrl={element.url}
+                  imageUrl={element.image_url}
+                  newsUrl={element.link}
                 />
               </div>
-            )
-          })}
+            ))}
         </div>
 
-        <div className="container d-flex justify-content-between">
+        <div className="container d-flex justify-content-between my-3">
           <button
-            disabled={this.state.page <= 1}
+            disabled={this.state.prevTokens.length === 0} // ✅ fix
             type="button"
             className="btn btn-dark"
-            onClick={this.handlePrevClick}>
+            onClick={this.handlePrevClick}
+          >
             &larr; Previous
           </button>
 
           <button
-            disabled={this.state.page + 1 > Math.ceil(this.state.totalResults / this.props.pageSize)}
+            disabled={!this.state.nextPage}  // ✅ fix
             type="button"
             className="btn btn-dark"
-            onClick={this.handleNextClick}>
+            onClick={this.handleNextClick}
+          >
             Next &rarr;
           </button>
         </div>
