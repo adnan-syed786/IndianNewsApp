@@ -1,8 +1,9 @@
 # Getting Started with Create React App
 
 Author is syed adnan hossain learning project
+<br>
 use own api key.
-[get aoi key from](https://newsdata.io/)
+[get api key from](https://newsdata.io/)
 and put them into app.js
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
