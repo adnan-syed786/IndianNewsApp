@@ -8,13 +8,13 @@ export class News extends Component {
   // default props
   static defaultProps = {
     country: 'in',
-    pageSize: 6,
+    size: 6,
     category: 'top'
   }
 
   static propTypes = {
     country: PropTypes.string,
-    pageSize: PropTypes.number,
+    size: PropTypes.number,
     category: PropTypes.string
   }
 
@@ -32,7 +32,7 @@ export class News extends Component {
   async componentDidMount() {
     this.setState({ loading: true });
 
-    let url = `https://newsdata.io/api/1/latest?apikey=${this.props.apiKey}&country=${this.props.country}&category=${this.props.category}&language=en&size=${this.props.pageSize}`;
+    let url = `https://newsdata.io/api/1/latest?apikey=${this.props.apiKey}&country=${this.props.country}&category=${this.props.category}&language=en&size=${this.props.size}`;
     let data = await fetch(url);
     let parsedData = await data.json();
     console.log(parsedData);
@@ -49,7 +49,7 @@ export class News extends Component {
     if (this.state.nextPage) {
       this.setState({ loading: true });
 
-      let url = `https://newsdata.io/api/1/latest?apikey=${this.props.apiKey}&country=${this.props.country}&category=${this.props.category}&language=en&size=${this.props.pageSize}&page=${this.state.nextPage}`;
+      let url = `https://newsdata.io/api/1/latest?apikey=${this.props.apiKey}&country=${this.props.country}&category=${this.props.category}&language=en&size=${this.props.size}&page=${this.state.nextPage}`;
       let data = await fetch(url);
       let parsedData = await data.json();
 
@@ -69,7 +69,7 @@ export class News extends Component {
       let prevTokensCopy = [...this.state.prevTokens];
       let prevToken = prevTokensCopy.pop();
 
-      let url = `https://newsdata.io/api/1/latest?apikey=${this.props.apiKey}&country=${this.props.country}&category=${this.props.category}&language=en&size=${this.props.pageSize}&page=${prevToken}`;
+      let url = `https://newsdata.io/api/1/latest?apikey=${this.props.apiKey}&country=${this.props.country}&category=${this.props.category}&language=en&size=${this.props.size}&page=${prevToken}`;
       let data = await fetch(url);
       let parsedData = await data.json();
 
