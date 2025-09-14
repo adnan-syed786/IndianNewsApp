@@ -18,6 +18,11 @@ export class News extends Component {
     category: PropTypes.string
   }
 
+  //add capitilize function in js to title of page 
+  capitalizeFirstLetter = (string)=> {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
   constructor(props) {
     super(props);
     console.log("hello i am constructor from news component");
@@ -27,6 +32,7 @@ export class News extends Component {
       nextPage: null,   // token for next page
       prevTokens: []    // stack for previous pages
     };
+    document.title=`${this.capitalizeFirstLetter(this.props.category)}-KhabarPoint`
   }
 
   async componentDidMount() {
@@ -86,7 +92,7 @@ export class News extends Component {
     return (
       <div className="container my-3">
         <h1 className="text-center" style={{ margin: "35px 0px" }}>
-          KhabarPoint - Top Headlines
+          KhabarPoint - Top {this.capitalizeFirstLetter(this.props.category)} Headlines
         </h1>
 
         {this.state.loading && <Spinner />}
